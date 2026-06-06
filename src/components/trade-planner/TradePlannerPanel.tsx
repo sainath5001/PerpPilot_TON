@@ -2,8 +2,9 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowDownRight, ArrowUpRight, Calculator } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { RiskPreview } from "@/components/trade-planner/RiskPreview";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +15,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { analyzePosition, type RiskMetrics } from "@/lib/risk-engine";
 import {
   defaultTradePlannerValues,
   tradePlannerSchema,
@@ -22,9 +24,18 @@ import {
 import { cn } from "@/lib/utils";
 import { selectSelectedAsset, useChartStore } from "@/store/chart-store";
 
+function parseOptionalNumber(value: unknown): number | undefined {
+  if (value === "" || value === null || value === undefined) return undefined;
+  const num = Number(value);
+  return Number.isFinite(num) ? num : undefined;
+}
+
 export function TradePlannerPanel() {
   const selectedAsset = useChartStore(selectSelectedAsset);
   const selectedAssetId = useChartStore((s) => s.selectedAssetId);
+  const [metrics, setMetrics] = useState<RiskMetrics | null>(null);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const form = useForm<TradePlannerFormValues>({
     resolver: zodResolver(tradePlannerSchema),
@@ -40,13 +51,52 @@ export function TradePlannerPanel() {
   } = form;
 
   const side = watch("side");
+  const collateral = watch("collateral");
+  const leverage = watch("leverage");
+  const entryPrice = watch("entryPrice");
+
+  const computedNotional =
+    Number.isFinite(collateral) &&
+    Number.isFinite(leverage) &&
+    collateral > 0 &&
+    leverage > 0
+      ? collateral * leverage
+      : null;
+
+  const computedSizeBase =
+    computedNotional !== null &&
+    Number.isFinite(entryPrice) &&
+    entryPrice > 0
+      ? computedNotional / entryPrice
+      : null;
 
   useEffect(() => {
     setValue("assetId", selectedAssetId, { shouldValidate: true });
   }, [selectedAssetId, setValue]);
 
-  const onSubmit = form.handleSubmit(() => {
-    // Risk analysis engine will connect in a future prompt
+  const onSubmit = form.handleSubmit((values) => {
+    setIsAnalyzing(true);
+    setAnalysisError(null);
+
+    const result = analyzePosition({
+      asset: values.assetId,
+      side: values.side,
+      entryPrice: values.entryPrice,
+      collateral: values.collateral,
+      leverage: values.leverage,
+      stopLoss: values.stopLoss,
+      takeProfit: values.takeProfit,
+    });
+
+    setIsAnalyzing(false);
+
+    if (!result.success) {
+      setMetrics(null);
+      setAnalysisError(result.errors.join(" "));
+      return;
+    }
+
+    setMetrics(result.metrics);
   });
 
   return (
@@ -81,7 +131,7 @@ export function TradePlannerPanel() {
         </div>
       </CardHeader>
 
-      <CardContent className="flex flex-1 flex-col">
+      <CardContent className="flex flex-1 flex-col overflow-y-auto">
         <form onSubmit={onSubmit} className="flex flex-1 flex-col gap-4">
           <div className="grid grid-cols-2 gap-2">
             <button
@@ -127,11 +177,11 @@ export function TradePlannerPanel() {
               }}
             />
             <Field
-              label="Position Size"
-              suffix={selectedAsset.baseAsset}
-              error={errors.size?.message}
+              label="Collateral"
+              suffix="USD"
+              error={errors.collateral?.message}
               inputProps={{
-                ...register("size", { valueAsNumber: true }),
+                ...register("collateral", { valueAsNumber: true }),
                 type: "number",
                 step: "any",
                 placeholder: "0.00",
@@ -151,33 +201,57 @@ export function TradePlannerPanel() {
               }}
             />
             <Field
-              label="Collateral"
-              suffix={selectedAsset.quoteAsset}
-              error={errors.collateral?.message}
+              label="Stop Loss"
+              suffix="USD"
+              error={errors.stopLoss?.message}
               inputProps={{
-                ...register("collateral", { valueAsNumber: true }),
+                ...register("stopLoss", { setValueAs: parseOptionalNumber }),
                 type: "number",
                 step: "any",
-                placeholder: "0.00",
+                placeholder: "Optional",
+              }}
+            />
+            <Field
+              label="Take Profit"
+              suffix="USD"
+              error={errors.takeProfit?.message}
+              inputProps={{
+                ...register("takeProfit", { setValueAs: parseOptionalNumber }),
+                type: "number",
+                step: "any",
+                placeholder: "Optional",
               }}
             />
           </div>
 
+          {(computedNotional !== null || computedSizeBase !== null) && (
+            <div className="rounded-lg border border-border/60 bg-background/40 px-3 py-2 text-xs">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Position Size</span>
+                <span className="font-mono">
+                  {computedNotional !== null
+                    ? `$${computedNotional.toLocaleString()}`
+                    : "—"}
+                </span>
+              </div>
+              <div className="mt-1 flex justify-between">
+                <span className="text-muted-foreground">Size (base)</span>
+                <span className="font-mono">
+                  {computedSizeBase !== null
+                    ? `${computedSizeBase.toFixed(6)} ${selectedAsset.baseAsset}`
+                    : "—"}
+                </span>
+              </div>
+            </div>
+          )}
+
           <Separator />
 
-          <div className="rounded-lg border border-dashed border-border bg-muted/10 p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Risk Preview
-            </p>
-            <div className="mt-3 space-y-2 text-sm">
-              <PreviewRow label="Health Score" value="—" />
-              <PreviewRow label="Liquidation Price" value="—" />
-              <PreviewRow label="Margin Ratio" value="—" />
-            </div>
-            <p className="mt-3 text-xs text-muted-foreground">
-              Risk engine connects in the next integration phase.
-            </p>
-          </div>
+          <RiskPreview
+            metrics={metrics}
+            error={analysisError}
+            isAnalyzing={isAnalyzing}
+          />
 
           <Button type="submit" variant="trading" className="mt-auto w-full">
             <Calculator className="h-4 w-4" />
@@ -210,7 +284,8 @@ function Field({
           {...inputProps}
           className={cn(
             "w-full rounded-lg border border-border bg-background px-3 py-2.5 pr-14 font-mono text-sm outline-none transition-colors placeholder:text-muted-foreground/50 focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30",
-            error && "border-red-500/50 focus:border-red-500/50 focus:ring-red-500/30"
+            error &&
+              "border-red-500/50 focus:border-red-500/50 focus:ring-red-500/30"
           )}
         />
         <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
@@ -218,15 +293,6 @@ function Field({
         </span>
       </div>
       {error && <p className="mt-1 text-xs text-red-400">{error}</p>}
-    </div>
-  );
-}
-
-function PreviewRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="font-mono font-medium">{value}</span>
     </div>
   );
 }

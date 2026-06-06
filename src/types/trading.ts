@@ -2,6 +2,7 @@ export type PositionSide = "long" | "short";
 
 export type RiskLevel = "low" | "medium" | "high" | "critical";
 
+/** @deprecated Use RiskEngineInput from lib/risk-engine */
 export interface PositionAnalysisInput {
   symbol: string;
   side: PositionSide;
@@ -12,14 +13,7 @@ export interface PositionAnalysisInput {
   liquidationPrice?: number;
 }
 
-export interface RiskMetrics {
-  healthScore: number;
-  riskLevel: RiskLevel;
-  liquidationDistance: number;
-  marginRatio: number;
-  maxDrawdown: number;
-  fundingImpact: number;
-}
+export type { RiskMetrics } from "@/lib/risk-engine/types";
 
 export interface DashboardMetric {
   id: string;
