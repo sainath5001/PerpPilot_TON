@@ -5,8 +5,13 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "PerpPilot TON — Perpetual Risk Terminal",
   description:
-    "Professional perpetual trading risk terminal for TON traders. Analyze liquidation metrics, plan collateral, and trade with confidence.",
+    "Professional perpetual trading risk terminal for TON traders. Analyze liquidation metrics, plan collateral, and fund positions via STON.fi Omniston.",
   keywords: ["TON", "perpetuals", "trading", "risk", "STON.fi", "Omniston"],
+  openGraph: {
+    title: "PerpPilot TON",
+    description: "Professional perpetual risk terminal for TON traders",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

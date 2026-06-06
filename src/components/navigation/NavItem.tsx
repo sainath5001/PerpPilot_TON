@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import type { NavItem } from "@/types";
 
@@ -12,7 +13,20 @@ interface NavItemLinkProps {
 
 export function NavItemLink({ item, collapsed = false }: NavItemLinkProps) {
   const pathname = usePathname();
-  const isActive = pathname === item.href;
+  const isHashLink = item.href.includes("#");
+  const [hash, setHash] = useState("");
+
+  useEffect(() => {
+    setHash(window.location.hash);
+    const onHashChange = () => setHash(window.location.hash);
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
+
+  const isActive = isHashLink
+    ? pathname === item.href.split("#")[0] &&
+      hash === `#${item.href.split("#")[1]}`
+    : pathname === item.href;
 
   const content = (
     <>

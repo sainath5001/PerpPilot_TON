@@ -6,6 +6,7 @@ import {
   Layers,
   Target,
 } from "lucide-react";
+import { LineChart } from "lucide-react";
 import {
   HealthScoreGauge,
   HealthScoreGaugePlaceholder,
@@ -18,6 +19,8 @@ import {
 } from "@/components/risk/RiskCard";
 import { TerminalMetricCard } from "@/components/risk/TerminalMetricCard";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 import type { LiveRiskAnalysis } from "@/hooks/use-live-risk-analysis";
 import { formatBaseAmount, formatPercent, formatUsd } from "@/lib/format";
 import { getChartAsset } from "@/lib/chart/assets";
@@ -70,21 +73,19 @@ export function RiskOverviewSection({
       </div>
 
       {!isReady && (
-        <div className="rounded-xl border border-dashed border-border bg-muted/10 px-6 py-10 text-center">
-          <p className="text-sm text-muted-foreground">
-            Enter entry price, collateral, and leverage to activate the risk engine.
-          </p>
-        </div>
+        <EmptyState
+          icon={LineChart}
+          title="Risk engine standby"
+          description="Enter entry price, collateral, and leverage in the trade planner to activate live risk metrics."
+          compact
+        />
       )}
 
       {isReady && errors.length > 0 && (
-        <div className="rounded-xl border border-red-500/30 bg-red-500/5 px-4 py-3">
-          {errors.map((error) => (
-            <p key={error} className="text-sm text-red-400">
-              {error}
-            </p>
-          ))}
-        </div>
+        <ErrorState
+          title="Invalid trade parameters"
+          message={errors.join(" · ")}
+        />
       )}
 
       {metrics && (

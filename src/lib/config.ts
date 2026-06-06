@@ -6,20 +6,24 @@ export const APP_CONFIG = {
 } as const;
 
 export const DASHBOARD_NAV = [
-  { id: "overview", label: "Overview", href: "/dashboard", icon: "📊" },
   {
-    id: "analyzer",
-    label: "Position Analyzer",
-    href: "/dashboard/analyzer",
-    icon: "🎯",
-    disabled: true,
-    badge: "Soon",
+    id: "terminal",
+    label: "Risk Terminal",
+    href: "/dashboard",
+    icon: "📈",
   },
   {
     id: "collateral",
-    label: "Collateral",
-    href: "/dashboard/collateral",
+    label: "Collateral Funding",
+    href: "/dashboard#funding",
     icon: "💎",
+    badge: "Omniston",
+  },
+  {
+    id: "analyzer",
+    label: "Portfolio View",
+    href: "/dashboard/analyzer",
+    icon: "🎯",
     disabled: true,
     badge: "Soon",
   },
