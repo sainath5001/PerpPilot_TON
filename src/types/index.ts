@@ -12,6 +12,16 @@ export type {
   DashboardMetric,
 } from "./trading";
 
+export type {
+  ChartAssetId,
+  ChartTimeframeId,
+  ChartLoadState,
+  ChartAsset,
+  ChartTimeframe,
+  ChartWidgetConfig,
+  ChartStoreState,
+} from "./chart";
+
 export interface NavItem {
   id: string;
   label: string;

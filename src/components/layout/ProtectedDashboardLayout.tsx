@@ -59,7 +59,7 @@ export function ProtectedDashboardLayout({
       <div className="flex flex-1 overflow-hidden">
         <Sidebar items={dashboardNavItems} />
         <main className="flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-7xl p-4 lg:p-6">{children}</div>
+          <div className="h-full w-full p-3 lg:p-4 xl:p-5">{children}</div>
         </main>
       </div>
     </div>
