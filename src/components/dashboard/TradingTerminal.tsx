@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ChartToolbar } from "@/components/chart/ChartToolbar";
 import { TradingViewChart } from "@/components/chart/TradingViewChart";
+import { FundingModal, FundingPanel } from "@/components/omniston";
 import { RiskOverviewSection } from "@/components/risk/RiskOverviewSection";
 import { TradePlannerPanel } from "@/components/trade-planner/TradePlannerPanel";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +28,8 @@ export function TradingTerminal() {
   const form = useTradePlannerForm();
   const values = form.watch();
   const analysis = useLiveRiskAnalysis(values);
+  const requiredCollateral = values.collateral > 0 ? values.collateral : 0;
+  const [fundingModalOpen, setFundingModalOpen] = useState(false);
 
   useEffect(() => {
     setFullscreen(isFullscreen);
@@ -59,7 +62,15 @@ export function TradingTerminal() {
               : "Analyze positions before execution"}
           </p>
         </div>
-        {analysis.metrics && (
+        <div className="flex items-center gap-3">
+          {requiredCollateral > 0 && wallet && (
+            <FundingModal
+              requiredCollateralUsd={requiredCollateral}
+              open={fundingModalOpen}
+              onOpenChange={setFundingModalOpen}
+            />
+          )}
+          {analysis.metrics && (
           <div className="hidden text-right sm:block">
             <p className="text-xs uppercase tracking-widest text-muted-foreground">
               Health Score
@@ -77,7 +88,8 @@ export function TradingTerminal() {
               {analysis.metrics.healthScore}
             </p>
           </div>
-        )}
+          )}
+        </div>
       </div>
 
       <div
@@ -114,7 +126,12 @@ export function TradingTerminal() {
       </div>
 
       {!isFullscreen && (
-        <RiskOverviewSection analysis={analysis} values={values} />
+        <>
+          <RiskOverviewSection analysis={analysis} values={values} />
+          {requiredCollateral > 0 && (
+            <FundingPanel requiredCollateralUsd={requiredCollateral} />
+          )}
+        </>
       )}
     </div>
   );

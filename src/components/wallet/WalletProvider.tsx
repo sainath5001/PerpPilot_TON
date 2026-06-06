@@ -1,11 +1,13 @@
 "use client";
 
+import { OmnistonProvider } from "@ston-fi/omniston-sdk-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppKitProvider } from "@ton/appkit-react";
 import { useState, type ReactNode } from "react";
 import "@ton/appkit-react/styles.css";
 import { createAppKit } from "@/lib/appkit";
 import { useWalletSync } from "@/hooks/use-wallet-sync";
+import { getOmnistonClient } from "@/lib/omniston/client";
 
 function WalletSyncBridge() {
   useWalletSync();
@@ -26,11 +28,15 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       })
   );
 
+  const omniston = getOmnistonClient();
+
   return (
     <AppKitProvider appKit={appKit}>
       <QueryClientProvider client={queryClient}>
-        <WalletSyncBridge />
-        {children}
+        <OmnistonProvider omniston={omniston}>
+          <WalletSyncBridge />
+          {children}
+        </OmnistonProvider>
       </QueryClientProvider>
     </AppKitProvider>
   );
