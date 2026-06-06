@@ -3,9 +3,12 @@
 import { useEffect } from "react";
 import { ChartToolbar } from "@/components/chart/ChartToolbar";
 import { TradingViewChart } from "@/components/chart/TradingViewChart";
+import { RiskOverviewSection } from "@/components/risk/RiskOverviewSection";
 import { TradePlannerPanel } from "@/components/trade-planner/TradePlannerPanel";
 import { Badge } from "@/components/ui/badge";
 import { useFullscreen } from "@/hooks/use-fullscreen";
+import { useLiveRiskAnalysis } from "@/hooks/use-live-risk-analysis";
+import { useTradePlannerForm } from "@/hooks/use-trade-planner-form";
 import { cn, truncateAddress } from "@/lib/utils";
 import {
   selectTradingViewSymbol,
@@ -20,6 +23,10 @@ export function TradingTerminal() {
   const setFullscreen = useChartStore((s) => s.setFullscreen);
   const { ref, isFullscreen, toggleFullscreen, exitFullscreen } =
     useFullscreen<HTMLDivElement>();
+
+  const form = useTradePlannerForm();
+  const values = form.watch();
+  const analysis = useLiveRiskAnalysis(values);
 
   useEffect(() => {
     setFullscreen(isFullscreen);
@@ -37,7 +44,7 @@ export function TradingTerminal() {
   }, [exitFullscreen, isFullscreen]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <Badge variant="success" className="mb-2">
@@ -52,6 +59,25 @@ export function TradingTerminal() {
               : "Analyze positions before execution"}
           </p>
         </div>
+        {analysis.metrics && (
+          <div className="hidden text-right sm:block">
+            <p className="text-xs uppercase tracking-widest text-muted-foreground">
+              Health Score
+            </p>
+            <p
+              className={cn(
+                "font-mono text-3xl font-bold tabular-nums",
+                analysis.metrics.healthScore <= 40
+                  ? "text-red-400"
+                  : analysis.metrics.healthScore <= 70
+                    ? "text-amber-400"
+                    : "text-emerald-400"
+              )}
+            >
+              {analysis.metrics.healthScore}
+            </p>
+          </div>
+        )}
       </div>
 
       <div
@@ -63,7 +89,7 @@ export function TradingTerminal() {
         <div
           ref={ref}
           className={cn(
-            "flex min-h-[480px] flex-col overflow-hidden rounded-xl border border-border bg-card/40 xl:min-h-[640px]",
+            "flex min-h-[420px] flex-col overflow-hidden rounded-xl border border-border bg-card/40 xl:min-h-[560px]",
             isFullscreen && "min-h-screen rounded-none border-0"
           )}
         >
@@ -81,11 +107,15 @@ export function TradingTerminal() {
         </div>
 
         {!isFullscreen && (
-          <div className="min-h-[480px] xl:min-h-[640px]">
-            <TradePlannerPanel />
+          <div className="min-h-[420px] xl:min-h-[560px]">
+            <TradePlannerPanel form={form} analysis={analysis} />
           </div>
         )}
       </div>
+
+      {!isFullscreen && (
+        <RiskOverviewSection analysis={analysis} values={values} />
+      )}
     </div>
   );
 }

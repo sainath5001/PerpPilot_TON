@@ -1,12 +1,9 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowDownRight, ArrowUpRight, Calculator } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { RiskPreview } from "@/components/trade-planner/RiskPreview";
+import { ArrowDownRight, ArrowUpRight, Radio } from "lucide-react";
+import { useEffect } from "react";
+import type { UseFormReturn } from "react-hook-form";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -14,13 +11,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { analyzePosition, type RiskMetrics } from "@/lib/risk-engine";
-import {
-  defaultTradePlannerValues,
-  tradePlannerSchema,
-  type TradePlannerFormValues,
-} from "@/lib/trade-planner/schema";
+import type { LiveRiskAnalysis } from "@/hooks/use-live-risk-analysis";
+import { getHealthScoreStyle } from "@/lib/risk-engine/health-utils";
+import type { TradePlannerFormValues } from "@/lib/trade-planner/schema";
 import { cn } from "@/lib/utils";
 import { selectSelectedAsset, useChartStore } from "@/store/chart-store";
 
@@ -30,18 +23,14 @@ function parseOptionalNumber(value: unknown): number | undefined {
   return Number.isFinite(num) ? num : undefined;
 }
 
-export function TradePlannerPanel() {
+interface TradePlannerPanelProps {
+  form: UseFormReturn<TradePlannerFormValues>;
+  analysis: LiveRiskAnalysis;
+}
+
+export function TradePlannerPanel({ form, analysis }: TradePlannerPanelProps) {
   const selectedAsset = useChartStore(selectSelectedAsset);
   const selectedAssetId = useChartStore((s) => s.selectedAssetId);
-  const [metrics, setMetrics] = useState<RiskMetrics | null>(null);
-  const [analysisError, setAnalysisError] = useState<string | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-
-  const form = useForm<TradePlannerFormValues>({
-    resolver: zodResolver(tradePlannerSchema),
-    defaultValues: defaultTradePlannerValues,
-    mode: "onChange",
-  });
 
   const {
     register,
@@ -51,53 +40,14 @@ export function TradePlannerPanel() {
   } = form;
 
   const side = watch("side");
-  const collateral = watch("collateral");
-  const leverage = watch("leverage");
-  const entryPrice = watch("entryPrice");
-
-  const computedNotional =
-    Number.isFinite(collateral) &&
-    Number.isFinite(leverage) &&
-    collateral > 0 &&
-    leverage > 0
-      ? collateral * leverage
-      : null;
-
-  const computedSizeBase =
-    computedNotional !== null &&
-    Number.isFinite(entryPrice) &&
-    entryPrice > 0
-      ? computedNotional / entryPrice
-      : null;
+  const healthScore = analysis.metrics?.healthScore;
 
   useEffect(() => {
     setValue("assetId", selectedAssetId, { shouldValidate: true });
   }, [selectedAssetId, setValue]);
 
-  const onSubmit = form.handleSubmit((values) => {
-    setIsAnalyzing(true);
-    setAnalysisError(null);
-
-    const result = analyzePosition({
-      asset: values.assetId,
-      side: values.side,
-      entryPrice: values.entryPrice,
-      collateral: values.collateral,
-      leverage: values.leverage,
-      stopLoss: values.stopLoss,
-      takeProfit: values.takeProfit,
-    });
-
-    setIsAnalyzing(false);
-
-    if (!result.success) {
-      setMetrics(null);
-      setAnalysisError(result.errors.join(" "));
-      return;
-    }
-
-    setMetrics(result.metrics);
-  });
+  const healthStyle =
+    healthScore !== undefined ? getHealthScoreStyle(healthScore) : null;
 
   return (
     <Card className="flex h-full flex-col border-border/80 bg-card/60">
@@ -125,14 +75,42 @@ export function TradePlannerPanel() {
               {selectedAsset.tradingViewSymbol}
             </p>
           </div>
-          <Badge variant="success" className="shrink-0 text-[10px]">
-            Synced
-          </Badge>
+          {analysis.metrics ? (
+            <Badge
+              variant="outline"
+              className={cn(
+                "shrink-0 font-mono text-[10px]",
+                healthStyle?.textClass
+              )}
+            >
+              {analysis.metrics.healthScore}
+            </Badge>
+          ) : (
+            <Badge variant="secondary" className="shrink-0 text-[10px]">
+              Pending
+            </Badge>
+          )}
         </div>
+
+        {analysis.isReady && analysis.metrics && (
+          <div
+            className={cn(
+              "mt-3 flex items-center gap-2 rounded-lg border px-3 py-2 text-xs",
+              healthStyle?.borderClass,
+              healthStyle?.bgClass
+            )}
+          >
+            <Radio className={cn("h-3 w-3 animate-pulse", healthStyle?.textClass)} />
+            <span className="text-muted-foreground">Live risk engine</span>
+            <span className={cn("ml-auto font-semibold", healthStyle?.textClass)}>
+              {healthStyle?.label}
+            </span>
+          </div>
+        )}
       </CardHeader>
 
       <CardContent className="flex flex-1 flex-col overflow-y-auto">
-        <form onSubmit={onSubmit} className="flex flex-1 flex-col gap-4">
+        <div className="flex flex-1 flex-col gap-4">
           <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
@@ -184,7 +162,7 @@ export function TradePlannerPanel() {
                 ...register("collateral", { valueAsNumber: true }),
                 type: "number",
                 step: "any",
-                placeholder: "0.00",
+                placeholder: "1000.00",
               }}
             />
             <Field
@@ -224,40 +202,10 @@ export function TradePlannerPanel() {
             />
           </div>
 
-          {(computedNotional !== null || computedSizeBase !== null) && (
-            <div className="rounded-lg border border-border/60 bg-background/40 px-3 py-2 text-xs">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Position Size</span>
-                <span className="font-mono">
-                  {computedNotional !== null
-                    ? `$${computedNotional.toLocaleString()}`
-                    : "—"}
-                </span>
-              </div>
-              <div className="mt-1 flex justify-between">
-                <span className="text-muted-foreground">Size (base)</span>
-                <span className="font-mono">
-                  {computedSizeBase !== null
-                    ? `${computedSizeBase.toFixed(6)} ${selectedAsset.baseAsset}`
-                    : "—"}
-                </span>
-              </div>
-            </div>
-          )}
-
-          <Separator />
-
-          <RiskPreview
-            metrics={metrics}
-            error={analysisError}
-            isAnalyzing={isAnalyzing}
-          />
-
-          <Button type="submit" variant="trading" className="mt-auto w-full">
-            <Calculator className="h-4 w-4" />
-            Analyze Position
-          </Button>
-        </form>
+          <p className="mt-auto text-center text-[11px] text-muted-foreground">
+            Metrics update instantly · client-side only
+          </p>
+        </div>
       </CardContent>
     </Card>
   );

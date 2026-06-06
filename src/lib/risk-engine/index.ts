@@ -39,6 +39,11 @@ export {
   MAINTENANCE_MARGIN_TIERS,
   HEALTH_SCORE_WEIGHTS,
 } from "./constants";
+export {
+  getHealthScoreBand,
+  getHealthScoreStyle,
+} from "./health-utils";
+export type { HealthScoreBand, HealthScoreStyle } from "./health-utils";
 export type {
   RiskEngineInput,
   RiskMetrics,
