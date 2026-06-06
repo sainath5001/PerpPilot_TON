@@ -1,103 +1,199 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import {
+  ArrowRight,
+  BarChart3,
+  Layers,
+  ShieldCheck,
+  Sparkles,
+  Wallet,
+} from "lucide-react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect } from "react";
+import { TopNav } from "@/components/layout/TopNav";
+import { WalletConnectButton } from "@/components/wallet/WalletConnectButton";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useIsWalletConnected } from "@/hooks/use-is-wallet-connected";
+
+const features = [
+  {
+    icon: BarChart3,
+    title: "Pre-Trade Risk Analysis",
+    description:
+      "Model liquidation price, margin ratio, and health score before opening a perpetual position.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Liquidation Monitoring",
+    description:
+      "Track distance-to-liquidation and portfolio-level risk in a professional trading terminal.",
+  },
+  {
+    icon: Layers,
+    title: "Collateral Management",
+    description:
+      "Top up collateral via STON.fi Omniston cross-chain SDK — built for TON-native traders.",
+  },
+];
+
+function LandingContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const authRequired = searchParams.get("auth") === "required";
+  const { isConnected, isReady } = useIsWalletConnected();
+
+  useEffect(() => {
+    if (isReady && isConnected) {
+      router.replace("/dashboard");
+    }
+  }, [isConnected, isReady, router]);
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="relative min-h-screen overflow-hidden bg-background">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-32 top-0 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl" />
+        <div className="absolute -right-32 top-32 h-96 w-96 rounded-full bg-cyan-500/10 blur-3xl" />
+        <div className="absolute bottom-0 left-1/2 h-64 w-[800px] -translate-x-1/2 rounded-full bg-emerald-500/5 blur-3xl" />
+      </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+      <TopNav />
+
+      <main className="relative mx-auto max-w-6xl px-4 pb-20 pt-12 lg:px-6 lg:pt-20">
+        {authRequired && (
+          <div className="mb-6 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
+            Connect your TON wallet to access the dashboard.
+          </div>
+        )}
+
+        <section className="text-center">
+          <Badge variant="success" className="mb-6">
+            <Sparkles className="mr-1 h-3 w-3" />
+            STON.fi Vibe Coding Hackathon
+          </Badge>
+
+          <h1 className="mx-auto max-w-4xl text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+            Professional Perpetual{" "}
+            <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+              Risk Terminal
+            </span>{" "}
+            for TON
+          </h1>
+
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
+            PerpPilot TON helps traders evaluate perpetual positions before
+            execution. Analyze liquidation metrics, plan collateral, and trade
+            with confidence — not on an exchange, but with institutional-grade
+            risk tooling.
+          </p>
+
+          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <WalletConnectButton size="lg" />
+            <Button variant="outline" size="lg" asChild>
+              <Link href="#features">
+                Explore Features
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+
+          <p className="mt-4 text-xs text-muted-foreground">
+            Wallet connection required · Tonkeeper supported · TON AppKit powered
+          </p>
+        </section>
+
+        <section id="features" className="mt-24 grid gap-6 md:grid-cols-3">
+          {features.map((feature) => (
+            <Card
+              key={feature.title}
+              className="border-border/80 bg-card/40 backdrop-blur transition-colors hover:border-emerald-500/30"
+            >
+              <CardHeader>
+                <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/10">
+                  <feature.icon className="h-5 w-5 text-emerald-400" />
+                </div>
+                <CardTitle className="text-lg">{feature.title}</CardTitle>
+                <CardDescription>{feature.description}</CardDescription>
+              </CardHeader>
+            </Card>
+          ))}
+        </section>
+
+        <section className="mt-16">
+          <Card className="overflow-hidden border-border/80 bg-card/60">
+            <CardContent className="grid gap-8 p-8 lg:grid-cols-2 lg:p-12">
+              <div>
+                <Badge variant="secondary" className="mb-4">
+                  Core Flow
+                </Badge>
+                <h2 className="text-2xl font-bold">Built for TON traders</h2>
+                <p className="mt-3 text-muted-foreground">
+                  Connect your wallet, access the dashboard, and analyze
+                  perpetual positions with liquidation metrics and health scores.
+                  Collateral management via Omniston arrives in the next sprint.
+                </p>
+                <ol className="mt-6 space-y-3 text-sm">
+                  {[
+                    "Connect TON wallet via AppKit",
+                    "Access protected risk dashboard",
+                    "Analyze position risk metrics",
+                    "Manage collateral via Omniston (soon)",
+                  ].map((step, i) => (
+                    <li key={step} className="flex items-center gap-3">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-xs font-bold text-emerald-400">
+                        {i + 1}
+                      </span>
+                      {step}
+                    </li>
+                  ))}
+                </ol>
+              </div>
+              <div className="rounded-xl border border-border bg-background/80 p-6">
+                <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
+                  <Wallet className="h-4 w-4" />
+                  Terminal Preview
+                </div>
+                <div className="space-y-3 font-mono text-xs">
+                  <div className="flex justify-between rounded-md bg-muted/40 px-3 py-2">
+                    <span className="text-muted-foreground">Health Score</span>
+                    <span className="text-emerald-400">— / 100</span>
+                  </div>
+                  <div className="flex justify-between rounded-md bg-muted/40 px-3 py-2">
+                    <span className="text-muted-foreground">
+                      Liquidation Distance
+                    </span>
+                    <span>—%</span>
+                  </div>
+                  <div className="flex justify-between rounded-md bg-muted/40 px-3 py-2">
+                    <span className="text-muted-foreground">Margin Ratio</span>
+                    <span>—%</span>
+                  </div>
+                  <div className="flex justify-between rounded-md bg-muted/40 px-3 py-2">
+                    <span className="text-muted-foreground">Collateral</span>
+                    <span>— TON</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
+  );
+}
+
+export default function LandingPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <LandingContent />
+    </Suspense>
   );
 }

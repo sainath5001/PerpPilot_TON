@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PerpPilot TON
 
-## Getting Started
+Professional perpetual trading risk terminal for TON traders — built for the [STON.fi Vibe Coding Hackathon](https://ston.fi).
 
-First, run the development server:
+## What it is
+
+PerpPilot TON is **not** a perpetual exchange. It is a risk-analysis, trade-planning, and collateral-management platform that helps TON traders evaluate positions before execution.
+
+## Tech stack
+
+- Next.js 15 (App Router)
+- TypeScript
+- Tailwind CSS v4 + shadcn/ui
+- Zustand
+- React Hook Form + Zod (ready for forms)
+- TON AppKit + TonConnect (Tonkeeper)
+
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000), connect a TON wallet (Tonkeeper), and access the dashboard.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/                    # Routes (landing, dashboard)
+├── components/
+│   ├── dashboard/          # Dashboard UI
+│   ├── layout/             # TopNav, ProtectedDashboardLayout
+│   ├── navigation/         # Sidebar, NavItem
+│   ├── providers/          # AppProviders (client-only wallet shell)
+│   ├── ui/                 # shadcn/ui primitives
+│   └── wallet/             # WalletProvider, WalletConnectButton
+├── hooks/                  # useWalletSync, useIsWalletConnected
+├── lib/                    # AppKit config, utils
+├── store/                  # Zustand wallet store
+└── types/                  # Global TypeScript types
+```
 
-## Learn More
+## Core flow
 
-To learn more about Next.js, take a look at the following resources:
+1. Land on the app
+2. Connect TON wallet (required)
+3. Access protected dashboard
+4. Analyze positions (coming in next prompts)
+5. Manage collateral via Omniston (coming soon)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Command        | Description          |
+| -------------- | -------------------- |
+| `npm run dev`  | Start dev server     |
+| `npm run build`| Production build     |
+| `npm run start`| Start production     |
+| `npm run lint` | ESLint               |
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Deploy to Vercel and update `public/tonconnect-manifest.json` with your production URL before going live.
