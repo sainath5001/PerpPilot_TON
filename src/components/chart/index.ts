@@ -1,7 +1,10 @@
 export { AssetSelector } from "./AssetSelector";
 export { ChartErrorState } from "./ChartErrorState";
 export { ChartLoadingOverlay } from "./ChartLoadingOverlay";
+export { ChartMarketHeader } from "./ChartMarketHeader";
 export { ChartToolbar } from "./ChartToolbar";
+export { ProTradingChart } from "./ProTradingChart";
 export { TimeframeSelector } from "./TimeframeSelector";
+export { TradingChartPanel } from "./TradingChartPanel";
 export { TradingViewChart } from "./TradingViewChart";
 export type { TradingViewChartProps } from "./TradingViewChart";

@@ -1,8 +1,8 @@
 "use client";
 
-import { Suspense, useEffect } from "react";
+import { Suspense } from "react";
 import { Loader2 } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import {
   FeaturesSection,
   HeroSection,
@@ -13,7 +13,6 @@ import {
 } from "@/components/landing";
 import { TopNav } from "@/components/layout/TopNav";
 import { FadeIn } from "@/components/ui/fade-in";
-import { useIsWalletConnected } from "@/hooks/use-is-wallet-connected";
 
 function AuthBanner() {
   const searchParams = useSearchParams();
@@ -32,15 +31,6 @@ function AuthBanner() {
 }
 
 function LandingContent() {
-  const router = useRouter();
-  const { isConnected, isReady } = useIsWalletConnected();
-
-  useEffect(() => {
-    if (isReady && isConnected) {
-      router.replace("/dashboard");
-    }
-  }, [isConnected, isReady, router]);
-
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">
       <div className="pointer-events-none absolute inset-0 bg-grid opacity-40" />

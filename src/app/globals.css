@@ -208,3 +208,8 @@ body {
 .focus-ring {
   @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
 }
+
+/* TonConnect modal above sticky header */
+#tc-widget-root {
+  z-index: 9999 !important;
+}

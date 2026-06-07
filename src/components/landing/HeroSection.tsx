@@ -2,7 +2,6 @@
 
 import { ArrowRight, Sparkles } from "lucide-react";
 import Link from "next/link";
-import { WalletConnectButton } from "@/components/wallet/WalletConnectButton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FadeIn } from "@/components/ui/fade-in";
@@ -31,7 +30,12 @@ export function HeroSection() {
           </p>
 
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
-            <WalletConnectButton size="lg" />
+            <Button variant="trading" size="lg" asChild className="min-w-[180px]">
+              <Link href="/dashboard">
+                Launch Terminal
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
             <Button variant="outline" size="lg" asChild className="min-w-[180px]">
               <Link href="#how-it-works">
                 See How It Works

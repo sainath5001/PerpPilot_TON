@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "bash scripts/dev.sh",
     "build": "next build",
-    "start": "next start",
+    "start": "next start --hostname 0.0.0.0 --port 3000",
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest"
@@ -28,6 +28,7 @@
     "@tonconnect/ui-react": "^2.4.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "lightweight-charts": "^5.2.0",
     "lucide-react": "^1.17.0",
     "next": "15.5.19",
     "react": "19.1.0",

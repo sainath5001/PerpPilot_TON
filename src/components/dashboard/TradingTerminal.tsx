@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Radio, Zap } from "lucide-react";
 import { ChartToolbar } from "@/components/chart/ChartToolbar";
-import { TradingViewChart } from "@/components/chart/TradingViewChart";
+import { TradingChartPanel } from "@/components/chart/TradingChartPanel";
 import { FundingModal, FundingPanel } from "@/components/omniston";
 import { RiskOverviewSection } from "@/components/risk/RiskOverviewSection";
 import { TradePlannerPanel } from "@/components/trade-planner/TradePlannerPanel";
@@ -13,16 +13,14 @@ import { useFullscreen } from "@/hooks/use-fullscreen";
 import { useLiveRiskAnalysis } from "@/hooks/use-live-risk-analysis";
 import { useTradePlannerForm } from "@/hooks/use-trade-planner-form";
 import { cn, truncateAddress } from "@/lib/utils";
-import {
-  selectTradingViewSymbol,
-  useChartStore,
-} from "@/store/chart-store";
+import { getChartAsset } from "@/lib/chart/assets";
+import { useChartStore } from "@/store/chart-store";
 import { useWalletStore } from "@/store/wallet-store";
 
 export function TradingTerminal() {
   const wallet = useWalletStore((s) => s.wallet);
-  const symbol = useChartStore(selectTradingViewSymbol);
-  const timeframe = useChartStore((s) => s.selectedTimeframeId);
+  const assetId = useChartStore((s) => s.selectedAssetId);
+  const asset = getChartAsset(assetId);
   const setFullscreen = useChartStore((s) => s.setFullscreen);
   const { ref, isFullscreen, toggleFullscreen, exitFullscreen } =
     useFullscreen<HTMLDivElement>();
@@ -59,7 +57,7 @@ export function TradingTerminal() {
                 Live Terminal
               </Badge>
               <Badge variant="outline" className="font-mono text-[10px]">
-                {symbol}
+                {asset.shortLabel}-PERP
               </Badge>
             </div>
             <h1 className="text-2xl font-bold tracking-tight xl:text-3xl">
@@ -113,7 +111,7 @@ export function TradingTerminal() {
           <div
             ref={ref}
             className={cn(
-              "flex min-h-[420px] flex-col overflow-hidden rounded-xl border border-border/60 bg-card/40 shadow-sm xl:min-h-[560px]",
+              "flex min-h-[520px] flex-col overflow-hidden rounded-xl border border-border/60 bg-[#0a0e13] shadow-lg shadow-black/20 xl:min-h-[640px]",
               isFullscreen && "min-h-screen rounded-none border-0 shadow-none"
             )}
           >
@@ -121,13 +119,7 @@ export function TradingTerminal() {
               isFullscreen={isFullscreen}
               onToggleFullscreen={toggleFullscreen}
             />
-            <div className="relative min-h-0 flex-1">
-              <TradingViewChart
-                symbol={symbol}
-                interval={timeframe}
-                className="absolute inset-0"
-              />
-            </div>
+            <TradingChartPanel className="min-h-0 flex-1" />
           </div>
 
           {!isFullscreen && (

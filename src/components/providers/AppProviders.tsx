@@ -8,12 +8,7 @@ const WalletProvider = dynamic(
     import("@/components/wallet/WalletProvider").then(
       (mod) => mod.WalletProvider
     ),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="min-h-screen bg-background">{/* hydration shell */}</div>
-    ),
-  }
+  { ssr: false }
 );
 
 export function AppProviders({ children }: { children: ReactNode }) {
