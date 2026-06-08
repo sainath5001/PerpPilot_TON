@@ -2,7 +2,6 @@
 
 import {
   ArrowRight,
-  CheckCircle2,
   ClipboardList,
   LineChart,
   Wallet,
@@ -91,58 +90,6 @@ export function HowItWorksSection() {
           ))}
         </div>
       </div>
-    </section>
-  );
-}
-
-export function TradeFlowVisualization() {
-  const flow = [
-    { label: "Trade Plan", sub: "Entry · Leverage · SL/TP" },
-    { label: "Risk Engine", sub: "Health · Liq. Price" },
-    { label: "Wallet Check", sub: "USDT Balance" },
-    { label: "Omniston Swap", sub: "TON → USDT" },
-    { label: "Ready", sub: "Execute on DEX" },
-  ];
-
-  return (
-    <section id="trade-flow" className="mt-28 lg:mt-36">
-      <FadeIn>
-        <SectionHeader
-          badge="Trade Flow"
-          title="End-to-end collateral preparation pipeline"
-          description="Visualize how PerpPilot connects risk analysis with STON.fi liquidity."
-          align="center"
-          className="mb-12"
-        />
-      </FadeIn>
-
-      <FadeIn delay={100}>
-        <div className="overflow-x-auto pb-2">
-          <div className="flex min-w-max items-center justify-center gap-2 px-4 lg:gap-3">
-            {flow.map((node, index) => (
-              <div key={node.label} className="flex items-center gap-2 lg:gap-3">
-                <div
-                  className={cn(
-                    "relative rounded-xl border px-4 py-3 text-center transition-all duration-300",
-                    index === flow.length - 1
-                      ? "border-emerald-500/40 bg-emerald-500/10 glow-emerald"
-                      : "border-border/60 bg-card/40 hover:border-emerald-500/20"
-                  )}
-                >
-                  {index === flow.length - 1 && (
-                    <CheckCircle2 className="absolute -right-1.5 -top-1.5 h-4 w-4 text-emerald-400" />
-                  )}
-                  <p className="text-sm font-semibold">{node.label}</p>
-                  <p className="mt-0.5 text-[10px] text-muted-foreground">{node.sub}</p>
-                </div>
-                {index < flow.length - 1 && (
-                  <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground/50" />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </FadeIn>
     </section>
   );
 }

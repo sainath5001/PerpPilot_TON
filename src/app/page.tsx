@@ -4,12 +4,12 @@ import { Suspense } from "react";
 import { Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import {
-  PlatformFlowSection,
+  EcosystemMarqueeSection,
   HeroSection,
   HowItWorksSection,
   LandingFooter,
-  OmnistonShowcase,
-  TradeFlowVisualization,
+  TestimonialsSection,
+  PlatformFlowSection,
 } from "@/components/landing";
 import { TopNav } from "@/components/layout/TopNav";
 import { FadeIn } from "@/components/ui/fade-in";
@@ -42,7 +42,7 @@ function LandingContent() {
 
       <TopNav />
 
-      <main className="relative mx-auto max-w-6xl px-4 pb-12 lg:px-6">
+      <main className="relative mx-auto max-w-6xl px-4 pb-28 lg:pb-12 lg:px-6">
         <Suspense fallback={null}>
           <div className="pt-6">
             <AuthBanner />
@@ -52,8 +52,8 @@ function LandingContent() {
         <HeroSection />
         <PlatformFlowSection />
         <HowItWorksSection />
-        <TradeFlowVisualization />
-        <OmnistonShowcase />
+        <EcosystemMarqueeSection />
+        <TestimonialsSection />
       </main>
 
       <LandingFooter />

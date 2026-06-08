@@ -24,7 +24,7 @@ const SOCIAL_LINKS = [
 const NAV_LINKS = [
   { label: "Platform Flow", href: "#platform-flow" },
   { label: "How It Works", href: "#how-it-works" },
-  { label: "Omniston", href: "#omniston" },
+  { label: "Reviews", href: "#testimonials" },
   { label: "Dashboard", href: "/dashboard" },
 ];
 
