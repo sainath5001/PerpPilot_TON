@@ -3,23 +3,15 @@ import { TonConnectUI, THEME } from "@tonconnect/ui";
 
 const TONCONNECT_CONNECTOR_ID = "tonconnect";
 
+/** Production origin — Tonkeeper validates manifest url/iconUrl against this domain. */
+export const TON_CONNECT_APP_ORIGIN = "https://perp-pilot-ton.vercel.app";
+
 let tonConnectUI: TonConnectUI | null = null;
 let appKit: AppKit | null = null;
 
-/** Stable manifest URL — never use 0.0.0.0 (Tonkeeper cannot reach it). */
+/** Always load the hosted manifest (never localhost — wallets cannot reach it). */
 export function getTonConnectManifestUrl(): string {
-  if (typeof window === "undefined") {
-    return "http://localhost:3000/tonconnect-manifest.json";
-  }
-
-  const { protocol, hostname, port } = window.location;
-  const host =
-    hostname === "0.0.0.0" || hostname === "127.0.0.1"
-      ? "localhost"
-      : hostname;
-  const portSuffix = port ? `:${port}` : "";
-
-  return `${protocol}//${host}${portSuffix}/tonconnect-manifest.json`;
+  return `${TON_CONNECT_APP_ORIGIN}/tonconnect-manifest.json`;
 }
 
 /** Module singleton — survives React Strict Mode remounts. */

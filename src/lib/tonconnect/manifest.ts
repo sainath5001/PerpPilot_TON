@@ -1,9 +1,6 @@
-export function getTonConnectManifestUrl(): string {
-  if (typeof window === "undefined") {
-    throw new Error("TonConnect manifest URL requires a browser environment");
-  }
-  return `${window.location.origin}/tonconnect-manifest.json`;
-}
+import { getTonConnectManifestUrl } from "@/lib/tonconnect/client";
+
+export { getTonConnectManifestUrl };
 
 export async function verifyTonConnectManifest(): Promise<{
   ok: boolean;

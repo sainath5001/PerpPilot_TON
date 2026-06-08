@@ -1,5 +1,5 @@
 {
-  "url": "http://localhost:3000",
+  "url": "https://perp-pilot-ton.vercel.app",
   "name": "PerpPilot TON",
-  "iconUrl": "http://localhost:3000/icon.png"
+  "iconUrl": "https://perp-pilot-ton.vercel.app/icon.png"
 }
