@@ -1,46 +1,51 @@
-import Link from "next/link";
-import { Activity } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+"use client";
+
+import { Activity, Code2, Globe, Mail } from "lucide-react";
+import { ModemAnimatedFooter } from "@/components/ui/modem-animated-footer";
+
+const SOCIAL_LINKS = [
+  {
+    icon: <Globe className="h-6 w-6" />,
+    href: "https://ston.fi",
+    label: "STON.fi",
+  },
+  {
+    icon: <Code2 className="h-6 w-6" />,
+    href: "https://github.com",
+    label: "GitHub",
+  },
+  {
+    icon: <Mail className="h-6 w-6" />,
+    href: "mailto:hello@perppilot.local",
+    label: "Email",
+  },
+];
+
+const NAV_LINKS = [
+  { label: "Platform Flow", href: "#platform-flow" },
+  { label: "How It Works", href: "#how-it-works" },
+  { label: "Omniston", href: "#omniston" },
+  { label: "Dashboard", href: "/dashboard" },
+];
 
 export function LandingFooter() {
   return (
-    <footer className="mt-28 border-t border-border/60 pb-10 pt-12 lg:mt-36">
-      <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
-        <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-400 to-cyan-500">
-            <Activity className="h-4 w-4 text-black" />
-          </div>
-          <div>
-            <p className="font-semibold">PerpPilot TON</p>
-            <p className="text-xs text-muted-foreground">
-              Built for STON.fi Vibe Coding Hackathon
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <Badge variant="outline" className="text-[10px]">
-            TON AppKit
-          </Badge>
-          <Badge variant="outline" className="text-[10px]">
-            Omniston SDK
-          </Badge>
-          <Badge variant="outline" className="text-[10px]">
-            TradingView
-          </Badge>
-        </div>
-      </div>
-
-      <p className="mt-8 text-center text-xs text-muted-foreground">
-        Not financial advice. PerpPilot is a risk analysis tool — not an exchange or custodian.{" "}
-        <Link href="#features" className="underline-offset-4 hover:underline">
-          Features
-        </Link>
-        {" · "}
-        <Link href="#how-it-works" className="underline-offset-4 hover:underline">
-          How it works
-        </Link>
+    <div className="relative w-full">
+      <ModemAnimatedFooter
+        brandName="PerpPilot TON"
+        brandDescription="Professional perpetual risk terminal for TON traders. Plan positions, score health, and fund collateral via STON.fi Omniston — not an exchange."
+        socialLinks={SOCIAL_LINKS}
+        navLinks={NAV_LINKS}
+        creatorName="STON.fi Hackathon"
+        creatorUrl="https://ston.fi"
+        brandIcon={
+          <Activity className="h-8 w-8 text-black drop-shadow-lg sm:h-10 sm:w-10 md:h-14 md:w-14" />
+        }
+      />
+      <p className="relative z-20 mx-auto max-w-2xl px-4 pb-8 text-center text-xs text-muted-foreground">
+        Not financial advice. PerpPilot is a risk analysis tool — not an exchange or
+        custodian.
       </p>
-    </footer>
+    </div>
   );
 }

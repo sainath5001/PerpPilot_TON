@@ -54,8 +54,9 @@ function LandingContent() {
         <HowItWorksSection />
         <TradeFlowVisualization />
         <OmnistonShowcase />
-        <LandingFooter />
       </main>
+
+      <LandingFooter />
     </div>
   );
 }
