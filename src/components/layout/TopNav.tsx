@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useIsWalletConnected } from "@/hooks/use-is-wallet-connected";
 
 const NAV_LINKS = [
-  { href: "#features", label: "Features" },
+  { href: "#platform-flow", label: "Platform Flow" },
   { href: "#how-it-works", label: "How It Works" },
   { href: "#omniston", label: "Omniston" },
 ];

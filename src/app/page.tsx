@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import {
-  FeaturesSection,
+  PlatformFlowSection,
   HeroSection,
   HowItWorksSection,
   LandingFooter,
@@ -50,7 +50,7 @@ function LandingContent() {
         </Suspense>
 
         <HeroSection />
-        <FeaturesSection />
+        <PlatformFlowSection />
         <HowItWorksSection />
         <TradeFlowVisualization />
         <OmnistonShowcase />
