@@ -111,7 +111,7 @@ export function TradingTerminal() {
           <div
             ref={ref}
             className={cn(
-              "flex min-h-[520px] flex-col overflow-hidden rounded-xl border border-border/60 bg-[#0a0e13] shadow-lg shadow-black/20 xl:min-h-[640px]",
+              "flex min-h-[460px] flex-col overflow-hidden rounded-xl border border-border/60 bg-[#0a0e13] shadow-lg shadow-black/20 xl:min-h-[580px]",
               isFullscreen && "min-h-screen rounded-none border-0 shadow-none"
             )}
           >
@@ -123,7 +123,7 @@ export function TradingTerminal() {
           </div>
 
           {!isFullscreen && (
-            <div className="min-h-[420px] xl:min-h-[560px]">
+            <div className="min-h-[380px] xl:min-h-[500px]">
               <TradePlannerPanel form={form} analysis={analysis} />
             </div>
           )}

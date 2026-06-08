@@ -21,7 +21,7 @@ function DashboardLoadingSkeleton() {
     <div className="flex min-h-screen flex-col bg-background">
       <TopNav />
       <div className="flex flex-1 overflow-hidden">
-        <div className="hidden w-72 border-r border-border/60 bg-card/40 lg:block">
+        <div className="hidden w-52 border-r border-border/60 bg-card/40 lg:block">
           <div className="space-y-3 p-4">
             <Skeleton className="h-4 w-20" />
             <Skeleton className="h-10 w-full" />

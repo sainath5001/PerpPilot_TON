@@ -22,13 +22,15 @@ export function buildTradingViewWidgetOptions(config: ChartWidgetConfig) {
     hide_legend: false,
     hide_side_toolbar: false,
     allow_symbol_change: false,
-    save_image: false,
+    save_image: true,
     calendar: false,
     hide_volume: false,
-    withdateranges: false,
+    withdateranges: true,
     details: false,
     hotlist: false,
     support_host: "https://www.tradingview.com",
+    studies: [],
+    watchlist: [],
   };
 }
 

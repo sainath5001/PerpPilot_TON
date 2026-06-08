@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
 import { ChartMarketHeader } from "@/components/chart/ChartMarketHeader";
-import { ProTradingChart } from "@/components/chart/ProTradingChart";
+import { TradingViewChart } from "@/components/chart/TradingViewChart";
 import { useChartData } from "@/hooks/use-chart-data";
-import { useChartStore } from "@/store/chart-store";
+import { selectSelectedAsset, useChartStore } from "@/store/chart-store";
 import { cn } from "@/lib/utils";
 
 interface TradingChartPanelProps {
@@ -12,43 +11,24 @@ interface TradingChartPanelProps {
 }
 
 /**
- * GMX / Hyperliquid-style chart panel: live ticker header + candlestick + volume.
+ * Live ticker header + full TradingView advanced chart (indicators, drawings, toolbars).
  */
 export function TradingChartPanel({ className }: TradingChartPanelProps) {
+  const asset = useChartStore(selectSelectedAsset);
   const assetId = useChartStore((s) => s.selectedAssetId);
   const timeframeId = useChartStore((s) => s.selectedTimeframeId);
 
-  const { candles, ticker, isLoading, error, reload } = useChartData(
-    assetId,
-    timeframeId
-  );
-
-  const setLoadState = useChartStore((s) => s.setLoadState);
-  const setLoadError = useChartStore((s) => s.setLoadError);
-
-  useEffect(() => {
-    if (isLoading) {
-      setLoadState("loading");
-      return;
-    }
-    if (error) {
-      setLoadError(error);
-      return;
-    }
-    setLoadState("ready");
-    setLoadError(null);
-  }, [isLoading, error, setLoadState, setLoadError]);
+  const { ticker, isLoading } = useChartData(assetId, timeframeId);
 
   return (
-    <div className={cn("flex h-full min-h-[480px] flex-col", className)}>
+    <div className={cn("flex h-full min-h-[420px] flex-col", className)}>
       <ChartMarketHeader ticker={ticker} isLoading={isLoading} />
       <div className="relative min-h-0 flex-1">
-        <ProTradingChart
-          candles={candles}
-          isLoading={isLoading}
-          error={error}
-          onRetry={() => void reload()}
-          className="absolute inset-0"
+        <TradingViewChart
+          key={`${asset.tradingViewSymbol}-${timeframeId}`}
+          symbol={asset.tradingViewSymbol}
+          interval={timeframeId}
+          className="absolute inset-0 h-full"
         />
       </div>
     </div>

@@ -32,7 +32,7 @@ export function NavItemLink({ item, collapsed = false }: NavItemLinkProps) {
     <>
       <span
         className={cn(
-          "flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-base",
+          "flex h-6 w-6 shrink-0 items-center justify-center rounded text-sm",
           isActive
             ? "bg-primary/15 text-primary"
             : "bg-muted/50 text-muted-foreground group-hover:text-foreground"
@@ -41,10 +41,10 @@ export function NavItemLink({ item, collapsed = false }: NavItemLinkProps) {
         {item.icon}
       </span>
       {!collapsed && (
-        <div className="flex min-w-0 flex-1 items-center justify-between gap-2">
-          <span className="truncate">{item.label}</span>
+        <div className="flex min-w-0 flex-1 items-center justify-between gap-1">
+          <span className="truncate text-xs">{item.label}</span>
           {item.badge && (
-            <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-primary">
+            <span className="shrink-0 rounded-full bg-primary/15 px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wide text-primary">
               {item.badge}
             </span>
           )}
@@ -54,7 +54,7 @@ export function NavItemLink({ item, collapsed = false }: NavItemLinkProps) {
   );
 
   const className = cn(
-    "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+    "group flex items-center gap-2 rounded-md px-2 py-1.5 text-xs font-medium transition-colors",
     item.disabled
       ? "cursor-not-allowed opacity-40"
       : isActive
