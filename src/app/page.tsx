@@ -32,29 +32,32 @@ function AuthBanner() {
 
 function LandingContent() {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background">
-      <div className="pointer-events-none absolute inset-0 bg-grid opacity-40" />
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-32 top-0 h-[500px] w-[500px] rounded-full bg-emerald-500/[0.07] blur-3xl" />
-        <div className="absolute -right-32 top-32 h-[500px] w-[500px] rounded-full bg-cyan-500/[0.06] blur-3xl" />
-        <div className="absolute bottom-0 left-1/2 h-72 w-[900px] -translate-x-1/2 rounded-full bg-emerald-500/[0.04] blur-3xl" />
-      </div>
-
+    <div className="relative min-h-screen bg-background">
       <TopNav />
 
-      <main className="relative mx-auto max-w-6xl px-4 pb-28 lg:pb-12 lg:px-6">
-        <Suspense fallback={null}>
-          <div className="pt-6">
-            <AuthBanner />
-          </div>
-        </Suspense>
+      <Suspense fallback={null}>
+        <div className="relative z-30 mx-auto max-w-6xl px-4 pt-4 lg:px-6">
+          <AuthBanner />
+        </div>
+      </Suspense>
 
-        <HeroSection />
-        <PlatformFlowSection />
-        <HowItWorksSection />
-        <EcosystemMarqueeSection />
-        <TestimonialsSection />
-      </main>
+      <HeroSection />
+
+      <div className="relative overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 bg-grid opacity-40" />
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -left-32 top-0 h-[500px] w-[500px] rounded-full bg-emerald-500/[0.07] blur-3xl" />
+          <div className="absolute -right-32 top-32 h-[500px] w-[500px] rounded-full bg-cyan-500/[0.06] blur-3xl" />
+          <div className="absolute bottom-0 left-1/2 h-72 w-[900px] -translate-x-1/2 rounded-full bg-emerald-500/[0.04] blur-3xl" />
+        </div>
+
+        <main className="relative mx-auto max-w-6xl px-4 pb-28 lg:pb-12 lg:px-6">
+          <PlatformFlowSection />
+          <HowItWorksSection />
+          <EcosystemMarqueeSection />
+          <TestimonialsSection />
+        </main>
+      </div>
 
       <LandingFooter />
     </div>
